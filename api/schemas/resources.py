@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
 
@@ -6,6 +5,7 @@ from pydantic import BaseModel
 class ResourceBase(BaseModel):
     item: str
     amount: int
+    calories: Optional[int] = 0
 
 
 class ResourceCreate(ResourceBase):
@@ -15,6 +15,7 @@ class ResourceCreate(ResourceBase):
 class ResourceUpdate(BaseModel):
     item: Optional[str] = None
     amount: Optional[int] = None
+    calories: Optional[int] = None
 
 
 class Resource(ResourceBase):

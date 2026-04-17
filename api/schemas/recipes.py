@@ -7,6 +7,7 @@ from .sandwiches import Sandwich
 
 class RecipeBase(BaseModel):
     amount: int
+    calorie_amount: Optional[int] = 0
 
 
 class RecipeCreate(RecipeBase):
@@ -17,6 +18,7 @@ class RecipeUpdate(BaseModel):
     sandwich_id: Optional[int] = None
     resource_id: Optional[int] = None
     amount: Optional[int] = None
+    calorie_amount: Optional[int] = None
 
 class Recipe(RecipeBase):
     id: int
