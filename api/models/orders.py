@@ -8,13 +8,13 @@ class Order(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    customer_name = Column(String(100))
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
+    customer_name = Column(String(100), nullable=False)
     order_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
     description = Column(String(300))
     phone = Column(String(20), nullable=True)
     address = Column(String(200), nullable=True)
     order_type = Column(String(10), nullable=False, server_default='dine_in')  # 'dine_in' or 'takeout'
-    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
     promo_id = Column(Integer, ForeignKey("promotions.id"), nullable=True)
 
     order_details = relationship("OrderDetail", back_populates="order")

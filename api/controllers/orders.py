@@ -1,16 +1,29 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as model
+from ..models.customers import Customer
 from sqlalchemy.exc import SQLAlchemyError
 
 
 def create(db: Session, request):
-    new_item = model.Order(
-        customer_name=request.customer_name,
-        description=request.description
-    )
-
     try:
+        customer = None
+
+        if request.customer_id:
+            customer = db.query(Customer).filter(Customer.id == request.customer_id).first()
+            if not customer:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ID Customer not found!")
+        if not request.customer_id and not request.customer_name:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Customer name needed")
+        new_item = model.Order(
+            customer_id = request.customer_id,
+            customer_name= customer.customer_name if customer else request.customer_name,
+            phone = customer.phone if customer else request.phone,
+            address = customer.address if customer else request.address,
+            description=request.description,
+            order_type = request.order_type,
+            promo_id = request.promo_id
+        )
         db.add(new_item)
         db.commit()
         db.refresh(new_item)
