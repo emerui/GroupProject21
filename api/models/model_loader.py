@@ -12,3 +12,4 @@ def index():
     customers.Base.metadata.create_all(engine)
     promotions.Base.metadata.create_all(engine)
     payments.Base.metadata.create_all(engine)
+    order_options.Base.metadata.create_all(engine)
