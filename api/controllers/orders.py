@@ -95,3 +95,16 @@ def calculate_order_total(order):
             total -= total * (order.promotion.discount / 100)
 
     return round(float(total), 2)
+
+def order_history(db:Session, customer_id: int):
+    try:
+        orders = db.query(model.Order).filter(model.Order.customer_id == customer_id).order_by(model.Order.order_date.desc()).all()
+        if not orders:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No orders found")
+        for item in orders:
+            item.total_price = calculate_order_total(item)
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return orders
+
