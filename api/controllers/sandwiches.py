@@ -2,12 +2,13 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import sandwiches as model
 from sqlalchemy.exc import SQLAlchemyError
+from typing import Optional
 
 def create(db: Session, request):
     new_item = model.Sandwich(
         sandwich_name=request.sandwich_name,
-        price = request.price,
-        category = request.category,
+        price=request.price,
+        category=request.category,
     )
     try:
         db.add(new_item)
@@ -16,7 +17,6 @@ def create(db: Session, request):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-
     return new_item
 
 def read_all(db: Session):
@@ -36,6 +36,19 @@ def read_one(db: Session, item_id):
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return item
+
+def search(db: Session, name: Optional[str] = None, category: Optional[str] = None):
+    try:
+        query = db.query(model.Sandwich)
+        if name:
+            query = query.filter(model.Sandwich.sandwich_name.ilike(f"%{name}%"))
+        if category:
+            query = query.filter(model.Sandwich.category.ilike(f"%{category}%"))
+        result = query.all()
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return result
 
 def update(db: Session, item_id, request):
     try:
