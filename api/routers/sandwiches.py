@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from ..controllers import sandwiches as controller
 from ..schemas import sandwiches as schema
 from ..dependencies.database import engine, get_db
+from typing import Optional
 
 router = APIRouter(
     tags=['Sandwiches'],
@@ -12,6 +13,10 @@ router = APIRouter(
 @router.post("/", response_model=schema.Sandwich)
 def create(request: schema.SandwichCreate, db: Session = Depends(get_db)):
     return controller.create(db=db, request=request)
+
+@router.get("/search", response_model=list[schema.Sandwich])
+def search(name: Optional[str] = None, category: Optional[str] = None, db: Session = Depends(get_db)):
+    return controller.search(db=db, name=name, category=category)
 
 @router.get("/", response_model=list[schema.Sandwich])
 def read_all(db: Session = Depends(get_db)):
