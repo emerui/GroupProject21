@@ -1,4 +1,4 @@
-from . import orders, order_details, customers, promotions
+from . import orders, order_details, customers, promotions, order_options
 
 
 def load_routes(app):
