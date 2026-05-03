@@ -3,6 +3,7 @@ from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as model
 from ..models.customers import Customer
 from sqlalchemy.exc import SQLAlchemyError
+from datetime import date
 
 
 def create(db: Session, request):
@@ -37,6 +38,8 @@ def create(db: Session, request):
 def read_all(db: Session):
     try:
         result = db.query(model.Order).all()
+        for item in result:
+            item.total_price = calculate_order_total(item)
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
@@ -48,6 +51,7 @@ def read_one(db: Session, item_id):
         item = db.query(model.Order).filter(model.Order.id == item_id).first()
         if not item:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
+        item.total_price = calculate_order_total(item)
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
@@ -79,3 +83,15 @@ def delete(db: Session, item_id):
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+def calculate_order_total(order):
+    total = 0
+
+    for item in order.order_details:
+        total += item.sandwich.price * item.amount
+
+    if order.promotion:
+        if order.promotion.expiration_date>= date.today():
+            total -= total * (order.promotion.discount / 100)
+
+    return round(float(total), 2)

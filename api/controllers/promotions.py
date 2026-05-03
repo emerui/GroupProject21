@@ -7,8 +7,7 @@ def create(db: Session, request):
     new_item = model.Promotion(
         name=request.name,
         discount = request.discount,
-        min_order_amount = request.min_order_amount,
-        expiration = request.expiration_date
+        expiration_date = request.expiration_date
     )
     try:
         db.add(new_item)
