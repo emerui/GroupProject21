@@ -1,4 +1,12 @@
-from . import orders, order_details, recipes, sandwiches, resources, customers, promotions, payments
+from . import orders
+from . import order_details
+from . import recipes
+from . import sandwiches
+from . import resources
+from . import customers
+from . import promotions
+from . import payments
+from . import order_options
 
 from ..dependencies.database import engine
 
