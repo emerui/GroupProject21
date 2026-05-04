@@ -24,6 +24,10 @@ def read_all(db: Session = Depends(get_db)):
 def read_one(item_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, item_id=item_id)
 
+@router.get("/history/{customer_id}", response_model=list[schema.Order])
+def order_history(customer_id: int, db: Session = Depends(get_db)):
+    return controller.order_history(db, customer_id=customer_id)
+
 
 @router.put("/{item_id}", response_model=schema.Order)
 def update(item_id: int, request: schema.OrderUpdate, db: Session = Depends(get_db)):

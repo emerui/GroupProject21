@@ -13,6 +13,7 @@ class OrderBase(BaseModel):
     order_type: Optional[str] = 'dine_in'  # 'dine_in' or 'takeout'
     customer_id: Optional[int] = None
     promo_id: Optional[int] = None
+    total_price: float
 
 
 class OrderCreate(OrderBase):
