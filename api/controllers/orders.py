@@ -4,6 +4,7 @@ from ..models import orders as model
 from ..models.customers import Customer
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import date
+from sqlalchemy import func, cast, Date
 
 
 def create(db: Session, request):
@@ -28,6 +29,7 @@ def create(db: Session, request):
         db.add(new_item)
         db.commit()
         db.refresh(new_item)
+        new_item.total_price=calculate_order_total(new_item)
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
@@ -108,3 +110,11 @@ def order_history(db:Session, customer_id: int):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return orders
 
+def total_revenue(db: Session, target_date: date):
+    orders = db.query(model.Order).filter(func.date(model.Order.order_date) == target_date).all()
+    total = sum(calculate_order_total(order) for order in orders)
+
+    return{
+        "date": target_date,
+        "total revenue": round(total,2)
+    }
