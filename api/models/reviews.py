@@ -10,3 +10,4 @@ class Review(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     review = Column(String(1000), nullable=True)
     sandwich_id = Column(Integer, ForeignKey("sandwiches.id"))
+    rating = Column(DECIMAL(10,2), nullable=False)

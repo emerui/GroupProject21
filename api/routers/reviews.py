@@ -33,3 +33,7 @@ def update(item_id: int, request: schema.ReviewUpdate, db: Session = Depends(get
 @router.delete("/{item_id}")
 def delete(item_id: int, db: Session = Depends(get_db)):
     return controller.delete(db=db, item_id=item_id)
+
+@router.get("/rating/{sandwich_id}")
+def get_rating(sandwich_id: int, db: Session = Depends(get_db)):
+    return controller.average_rating(db, sandwich_id)
