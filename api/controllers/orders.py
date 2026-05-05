@@ -24,7 +24,8 @@ def create(db: Session, request):
             address = customer.address if customer else request.address,
             description=request.description,
             order_type = request.order_type,
-            promo_id = request.promo_id
+            promo_id = request.promo_id,
+            payment_method = request.payment_method
         )
         db.add(new_item)
         db.commit()

@@ -16,9 +16,9 @@ class Order(Base):
     phone = Column(String(20), nullable=True)
     address = Column(String(200), nullable=True)
     order_type = Column(String(10), nullable=False, server_default='dine_in')  # 'dine_in' or 'takeout'
+    payment_method = Column(String(20), nullable=True)
     promo_id = Column(Integer, ForeignKey("promotions.id"), nullable=True)
 
     order_details = relationship("OrderDetail", back_populates="order")
     customer = relationship("Customer", back_populates="orders")
     promotion = relationship("Promotion", back_populates="orders")
-    payment = relationship("Payment", back_populates="order", uselist=False)

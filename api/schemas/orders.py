@@ -13,12 +13,11 @@ class OrderBase(BaseModel):
     order_type: Optional[str] = 'dine_in'  # 'dine_in' or 'takeout'
     customer_id: Optional[int] = None
     promo_id: Optional[int] = None
-    total_price: float
+    payment_method: Optional[str] = None
 
 
 class OrderCreate(OrderBase):
     pass
-
 
 class OrderUpdate(BaseModel):
     customer_name: Optional[str] = None
@@ -34,6 +33,7 @@ class Order(OrderBase):
     id: int
     order_date: Optional[datetime] = None
     order_details: list[OrderDetail] = None
+    total_price: Optional[float] = None
 
     class ConfigDict:
         from_attributes = True
