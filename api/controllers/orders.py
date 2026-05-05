@@ -118,3 +118,11 @@ def total_revenue(db: Session, target_date: date):
         "date": target_date,
         "total revenue": round(total,2)
     }
+
+def date_range(db: Session, start_date: date, end_date: date):
+    orders = db.query(model.Order).filter(func.date(model.Order.order_date) >= start_date, func.date(model.Order.order_date)<=end_date).order_by(model.Order.order_date.asc()).all()
+    if not orders:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No orders in date range")
+    for order in orders:
+        order.total_price = calculate_order_total(order)
+    return orders

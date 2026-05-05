@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, FastAPI, status, Response
+from fastapi import APIRouter, Depends, FastAPI, status, Response, Query
 from sqlalchemy.orm import Session
 from ..controllers import orders as controller
 from ..schemas import orders as schema
@@ -15,6 +15,14 @@ router = APIRouter(
 @router.post("/", response_model=schema.Order)
 def create(request: schema.OrderCreate, db: Session = Depends(get_db)):
     return controller.create(db=db, request=request)
+
+@router.get("/range", response_model = list[schema.Order])
+def get_range(
+        start_date: date = Query(),
+        end_date: date = Query(),
+        db: Session = Depends(get_db)
+):
+    return controller.date_range(db, start_date, end_date)
 
 
 @router.get("/", response_model=list[schema.Order])
@@ -43,3 +51,4 @@ def delete(item_id: int, db: Session = Depends(get_db)):
 @router.get("/revenue/daily")
 def get_revenue(target_date: date, db: Session = Depends(get_db)):
     return controller.total_revenue(db, target_date)
+
