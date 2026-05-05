@@ -4,9 +4,9 @@ from datetime import datetime
 from ..dependencies.database import Base
 
 
-class Sandwich(Base):
+class Review(Base):
     __tablename__ = "reviews"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    review = Column(String(1000), unique=True, nullable=True)
+    review = Column(String(1000), nullable=True)
     sandwich_id = Column(Integer, ForeignKey("sandwiches.id"))

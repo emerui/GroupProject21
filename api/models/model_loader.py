@@ -7,7 +7,7 @@ from . import customers
 from . import promotions
 from . import payments
 from . import order_options
-
+from . import reviews
 from ..dependencies.database import engine
 
 
@@ -21,3 +21,4 @@ def index():
     promotions.Base.metadata.create_all(engine)
     payments.Base.metadata.create_all(engine)
     order_options.Base.metadata.create_all(engine)
+    reviews.Base.metadata.create_all(engine)

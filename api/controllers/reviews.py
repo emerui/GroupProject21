@@ -2,13 +2,11 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import reviews as model
 from sqlalchemy.exc import SQLAlchemyError
-from typing import Optional
 
 def create(db: Session, request):
-    new_item = model.Sandwich(
-        sandwich_name=request.sandwich_name,
-        price=request.price,
-        category=request.category,
+    new_item = model.Review(
+        review=request.review,
+        sandwich_id = request.sandwich_id
     )
     try:
         db.add(new_item)
@@ -17,11 +15,12 @@ def create(db: Session, request):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+
     return new_item
 
 def read_all(db: Session):
     try:
-        result = db.query(model.Sandwich).all()
+        result = db.query(model.Review).all()
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
@@ -29,7 +28,7 @@ def read_all(db: Session):
 
 def read_one(db: Session, item_id):
     try:
-        item = db.query(model.Sandwich).filter(model.Sandwich.id == item_id).first()
+        item = db.query(model.Review).filter(model.Review.id == item_id).first()
         if not item:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
     except SQLAlchemyError as e:
@@ -37,22 +36,9 @@ def read_one(db: Session, item_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return item
 
-def search(db: Session, name: Optional[str] = None, category: Optional[str] = None):
-    try:
-        query = db.query(model.Sandwich)
-        if name:
-            query = query.filter(model.Sandwich.sandwich_name.ilike(f"%{name}%"))
-        if category:
-            query = query.filter(model.Sandwich.category.ilike(f"%{category}%"))
-        result = query.all()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return result
-
 def update(db: Session, item_id, request):
     try:
-        item = db.query(model.Sandwich).filter(model.Sandwich.id == item_id)
+        item = db.query(model.Review).filter(model.Review.id == item_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         update_data = request.dict(exclude_unset=True)
@@ -65,7 +51,7 @@ def update(db: Session, item_id, request):
 
 def delete(db: Session, item_id):
     try:
-        item = db.query(model.Sandwich).filter(model.Sandwich.id == item_id)
+        item = db.query(model.Review).filter(model.Review.id == item_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         item.delete(synchronize_session=False)
